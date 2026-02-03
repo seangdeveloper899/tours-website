@@ -5,15 +5,18 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
 
     public function index(): JsonResponse
     {
-        $categories = Category::withCount('tours')
-            ->orderBy('name', 'asc')
-            ->get();
+        $categories = Cache::remember('categories_list', now()->addHours(2), function () {
+            return Category::withCount('tours')
+                ->orderBy('name', 'asc')
+                ->get();
+        });
 
         return response()->json([
             'success' => true,
@@ -23,12 +26,16 @@ class CategoryController extends Controller
 
     public function show(string $slug): JsonResponse
     {
-        $category = Category::where('slug', $slug)
-            ->with(['tours' => function ($query) {
-                $query->where('is_active', true)
-                      ->with('reviews');
-            }])
-            ->first();
+        $cacheKey = "category_details_{$slug}";
+        
+        $category = Cache::remember($cacheKey, now()->addMinutes(30), function () use ($slug) {
+            return Category::where('slug', $slug)
+                ->with(['tours' => function ($query) {
+                    $query->where('is_active', true)
+                          ->with('reviews');
+                }])
+                ->first();
+        });
 
         if (!$category) {
             return response()->json([
