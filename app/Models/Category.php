@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class Category extends Model
 {
-    //comment
+
     use HasFactory;
 
     protected $fillable = [
@@ -36,13 +36,11 @@ class Category extends Model
         });
     }
 
-    // Relationships
     public function tours()
     {
         return $this->hasMany(Tour::class);
     }
 
-    // Scopes
     public function scopeActive($query)
     {
         return $query->where('is_active', true);

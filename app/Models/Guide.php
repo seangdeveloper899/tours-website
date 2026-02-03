@@ -27,19 +27,16 @@ class Guide extends Model
         'is_available' => 'boolean',
     ];
 
-    // Relationships
     public function tours()
     {
         return $this->hasMany(Tour::class);
     }
 
-    // Accessors
     public function getLanguagesArrayAttribute()
     {
         return $this->languages ? explode(',', $this->languages) : [];
     }
 
-    // Scopes
     public function scopeAvailable($query)
     {
         return $query->where('is_available', true);
