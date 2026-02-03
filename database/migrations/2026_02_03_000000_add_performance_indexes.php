@@ -8,13 +8,6 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('tours', function (Blueprint $table) {
-            $table->index('is_featured');
-            $table->index('is_active');
-            $table->index(['category_id', 'is_active']);
-            $table->index(['is_active', 'is_featured']);
-        });
-
         Schema::table('bookings', function (Blueprint $table) {
             $table->index('customer_email');
             $table->index('status');
@@ -23,7 +16,7 @@ return new class extends Migration
         });
 
         Schema::table('reviews', function (Blueprint $table) {
-            $table->index(['tour_id', 'is_published']);
+            $table->index(['tour_id', 'is_approved']);
         });
 
         Schema::table('transactions', function (Blueprint $table) {
@@ -34,13 +27,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('tours', function (Blueprint $table) {
-            $table->dropIndex(['is_featured']);
-            $table->dropIndex(['is_active']);
-            $table->dropIndex(['category_id', 'is_active']);
-            $table->dropIndex(['is_active', 'is_featured']);
-        });
-
         Schema::table('bookings', function (Blueprint $table) {
             $table->dropIndex(['customer_email']);
             $table->dropIndex(['status']);
@@ -49,7 +35,7 @@ return new class extends Migration
         });
 
         Schema::table('reviews', function (Blueprint $table) {
-            $table->dropIndex(['tour_id', 'is_published']);
+            $table->dropIndex(['tour_id', 'is_approved']);
         });
 
         Schema::table('transactions', function (Blueprint $table) {
