@@ -27,8 +27,8 @@ class BookingController extends Controller
             'customer_email' => 'required|email|max:255',
             'customer_phone' => 'required|string|max:20',
             'booking_date' => 'required|date|after_or_equal:today',
-            'number_of_participants' => 'required|integer|min:1',
-            'special_requests' => 'nullable|string|max:1000',
+            'number_of_people' => 'required|integer|min:1',
+            'special_requirements' => 'nullable|string|max:1000',
         ]);
 
         if ($validator->fails()) {
@@ -50,14 +50,14 @@ class BookingController extends Controller
             ], 404);
         }
 
-        if ($request->number_of_participants > $tour->max_participants) {
+        if ($request->number_of_people > $tour->max_people) {
             return response()->json([
                 'success' => false,
-                'message' => "Maximum {$tour->max_participants} participants allowed for this tour"
+                'message' => "Maximum {$tour->max_people} participants allowed for this tour"
             ], 422);
         }
 
-        $totalPrice = $tour->price * $request->number_of_participants;
+        $totalPrice = $tour->price * $request->number_of_people;
 
         $bookingReference = $this->generateBookingReference();
 
@@ -67,13 +67,11 @@ class BookingController extends Controller
             'customer_email' => $request->customer_email,
             'customer_phone' => $request->customer_phone,
             'booking_date' => $request->booking_date,
-            'number_of_participants' => $request->number_of_participants,
-            'number_of_people' => $request->number_of_participants,
-            'total_price' => $totalPrice,
+            'number_of_people' => $request->number_of_people,
             'total_amount' => $totalPrice,
             'price_per_person' => $tour->price,
-            'special_requests' => $request->special_requests,
-            'special_requirements' => $request->special_requests,
+            'deposit_amount' => 0,
+            'special_requirements' => $request->special_requirements,
             'status' => 'pending',
             'payment_status' => 'unpaid',
             'booking_reference' => $bookingReference,

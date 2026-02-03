@@ -168,7 +168,7 @@ class BookingApiTest extends TestCase
         ]);
 
         $response = $this->postJson('/api/v1/bookings/' . $booking->id . '/payment', [
-            'amount' => 50, // Less than total
+            'amount' => 50,
             'payment_method' => 'credit_card',
             'transaction_id' => 'TXN123',
         ]);
