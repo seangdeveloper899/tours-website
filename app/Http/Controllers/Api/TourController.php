@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Tour;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 
 class TourController extends Controller
 {
@@ -87,12 +88,17 @@ class TourController extends Controller
 
     public function featured(Request $request): JsonResponse
     {
-        $tours = Tour::with(['category', 'reviews'])
-            ->where('is_active', true)
-            ->where('is_featured', true)
-            ->orderBy('created_at', 'desc')
-            ->limit($request->get('limit', 6))
-            ->get();
+        $limit = $request->get('limit', 6);
+        $cacheKey = "featured_tours_{$limit}";
+        
+        $tours = Cache::remember($cacheKey, now()->addHours(1), function () use ($limit) {
+            return Tour::with(['category', 'reviews'])
+                ->where('is_active', true)
+                ->where('is_featured', true)
+                ->orderBy('created_at', 'desc')
+                ->limit($limit)
+                ->get();
+        });
 
         $tours->transform(function ($tour) {
             $tour->reviews_count = $tour->reviews->count();
@@ -108,10 +114,14 @@ class TourController extends Controller
 
     public function show(string $slug): JsonResponse
     {
-        $tour = Tour::with(['category', 'reviews', 'reviews.booking'])
-            ->where('slug', $slug)
-            ->where('is_active', true)
-            ->first();
+        $cacheKey = "tour_details_{$slug}";
+        
+        $tour = Cache::remember($cacheKey, now()->addMinutes(30), function () use ($slug) {
+            return Tour::with(['category', 'reviews', 'reviews.booking'])
+                ->where('slug', $slug)
+                ->where('is_active', true)
+                ->first();
+        });
 
         if (!$tour) {
             return response()->json([

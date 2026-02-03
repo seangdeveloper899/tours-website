@@ -12,10 +12,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\AdminAuth::class,
+        ]);
+        
         $middleware->api(append: [
             \Illuminate\Http\Middleware\HandleCors::class,
         ]);
+        
+        $middleware->throttleApi();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
 
