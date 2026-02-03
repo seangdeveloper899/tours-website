@@ -7,11 +7,8 @@ use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
-
     public function up(): void
     {
-        Schema::table('bookings', function (Blueprint $table) {
-
         if (!Schema::hasColumn('bookings', 'booking_reference')) {
             Schema::table('bookings', function (Blueprint $table) {
                 $table->string('booking_reference')->nullable()->unique()->after('booking_number');
@@ -28,14 +25,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('bookings', function (Blueprint $table) {
-            if (Schema::hasColumn('bookings', 'transaction_id')) {
-                $table->dropColumn('transaction_id');
-            }
-            if (Schema::hasColumn('bookings', 'payment_date')) {
-                $table->dropColumn('payment_date');
-            }
-            if (Schema::hasColumn('bookings', 'deposit_amount')) {
-                $table->dropColumn('deposit_amount');
+            if (Schema::hasColumn('bookings', 'booking_reference')) {
+                $table->dropColumn('booking_reference');
             }
         });
     }

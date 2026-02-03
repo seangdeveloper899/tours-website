@@ -30,6 +30,15 @@ class ContactController extends Controller
             ], 422);
         }
 
+        Log::info('Contact form submission', [
+            'name' => $request->name,
+            'email' => $request->email,
+            'subject' => $request->subject,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your message has been received. We will contact you soon.'
         ], 201);
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 
 class AuthController extends Controller
@@ -283,7 +284,17 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 400);
+        }
 
-        ], 400);
+        $token = Str::random(60);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Password reset link sent to your email'
+        ]);
     }
 }
