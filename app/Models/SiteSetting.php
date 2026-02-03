@@ -13,11 +13,10 @@ class SiteSetting extends Model
         'key', 'value', 'type', 'group', 'description',
     ];
 
-    // Helper method to get setting by key
     public static function get($key, $default = null)
     {
         $setting = static::where('key', $key)->first();
-        
+
         if (!$setting) {
             return $default;
         }
@@ -30,7 +29,6 @@ class SiteSetting extends Model
         };
     }
 
-    // Helper to set a value
     public static function set($key, $value, $type = 'text')
     {
         return static::updateOrCreate(

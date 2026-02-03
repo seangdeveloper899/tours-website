@@ -28,7 +28,6 @@ class Review extends Model
     {
         parent::boot();
 
-        // Update tour ratings
         static::created(function ($review) {
             if ($review->is_approved) {
                 $review->tour->updateRating();
@@ -44,7 +43,6 @@ class Review extends Model
         });
     }
 
-    // Relationships
     public function tour()
     {
         return $this->belongsTo(Tour::class);
@@ -60,7 +58,6 @@ class Review extends Model
         return $this->belongsTo(Booking::class);
     }
 
-    // Scopes
     public function scopeApproved($query)
     {
         return $query->where('is_approved', true);
@@ -76,7 +73,6 @@ class Review extends Model
         return $query->orderBy('created_at', 'desc');
     }
 
-    // Methods
     public function approve()
     {
         $this->update(['is_approved' => true]);

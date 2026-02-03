@@ -56,7 +56,6 @@ class Tour extends Model
         });
     }
 
-    // Relationships
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -82,7 +81,6 @@ class Tour extends Model
         return $this->hasMany(TourBanner::class);
     }
 
-    // Scopes
     public function scopeFeatured($query)
     {
         return $query->where('is_featured', true);
@@ -103,7 +101,6 @@ class Tour extends Model
         return $query->where('rating', '>=', 4)->orderBy('rating', 'desc');
     }
 
-    // Accessors
     public function getDiscountPercentageAttribute()
     {
         if ($this->original_price && $this->original_price > $this->price) {
@@ -117,7 +114,6 @@ class Tour extends Model
         return $this->discount_percentage > 0;
     }
 
-    // Methods
     public function updateRating()
     {
         $approvedReviews = $this->reviews()->approved();
